@@ -1,0 +1,51 @@
+name: PrivateIPs
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "network/*.sls"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install PyYAML
+
+      - name: set files changed env variable
+        run: echo "FILES_CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep network | xargs)" >> $GITHUB_ENV
+        shell: bash
+
+      - name:  create diff containing ip adds and deletions for each changed file
+        working-directory: ./
+        run: |
+          for file in $FILES_CHANGED; do
+            git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} --unified=0 -- $file >> $file.gitdiff
+          done
+
+      - name: Run pr changed files script
+        working-directory: ./
+        run: |
+          echo "Files changed: $FILES_CHANGED"
+          for file in $FILES_CHANGED; do
+            ./detect_privateip_pr.py $file
+          done
+        shell: bash
