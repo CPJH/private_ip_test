@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - "network/*.sls"
+      - "net/*.sls"
 
 jobs:
   build:
@@ -31,7 +31,7 @@ jobs:
           pip install PyYAML
 
       - name: set files changed env variable
-        run: echo "FILES_CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep network | xargs)" >> $GITHUB_ENV
+        run: echo "FILES_CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -w net | xargs)" >> $GITHUB_ENV
         shell: bash
 
       - name:  create diff containing ip adds and deletions for each changed file
