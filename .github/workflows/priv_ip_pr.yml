@@ -11,9 +11,6 @@ on:
 jobs:
   check-for-privateIPs:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./
 
     steps:
       - name: Checkout code
@@ -36,7 +33,6 @@ jobs:
         shell: bash
 
       - name:  checkout master version of files and create diff containing ip adds and deletions for each changed file
-        working-directory: ./
         run: |
           for file in $FILES_CHANGED; do
             git show ${{ github.event.pull_request.base.sha }}:$file > $file.master
@@ -44,7 +40,6 @@ jobs:
           done
 
       - name: Run check scripts
-        working-directory: ./
         run: |
           echo "Files changed: $FILES_CHANGED"
           for file in $FILES_CHANGED; do
