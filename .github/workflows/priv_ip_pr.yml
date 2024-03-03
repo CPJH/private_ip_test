@@ -34,18 +34,20 @@ jobs:
         run: echo "FILES_CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -w net | xargs)" >> $GITHUB_ENV
         shell: bash
 
-      - name:  create diff containing ip adds and deletions for each changed file
+      - name:  checkout master version of files and create diff containing ip adds and deletions for each changed file
         working-directory: ./
         run: |
           for file in $FILES_CHANGED; do
-            git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} --unified=0 -- $file >> $file.gitdiff
+            git show ${{ github.event.pull_request.base.sha }}:$file > $file.master
+            git diff ${{ github.event.pull_request.base.sha }} ${{ github.sha }} --unified=0 -- $file > $file.gitdiff
           done
 
-      - name: Run pr changed files script
+      - name: Run check scripts
         working-directory: ./
         run: |
           echo "Files changed: $FILES_CHANGED"
           for file in $FILES_CHANGED; do
+            ./scan_for_priv_ip.py $file
             ./detect_privateip_pr.py $file
           done
         shell: bash
