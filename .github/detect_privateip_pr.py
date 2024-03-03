@@ -9,6 +9,7 @@ def is_private_ip(ip):
         ip_obj = ipaddress.ip_address(ip)
         return ip_obj.is_private
     except ValueError:
+        print(f"Invalid IP address {ip} detected")
         print("Please check and validate the IP addresses added in this file related to this PR")
         sys.exit(1)
         
