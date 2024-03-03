@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - "net/*.sls"
+  workflow_dispatch:
 
 jobs:
   check-for-privateIPs:
