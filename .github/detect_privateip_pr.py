@@ -10,7 +10,8 @@ def is_private_ip(ip):
         return ip_obj.is_private
     except ValueError:
         print("Please check and validate the IP addresses added in this file related to this PR")
-
+        sys.exit(1)
+        
 def clean_ip_string(ip_addr):
     clean_ip_str = ip_addr.replace("'", "").replace('"', '')
     return clean_ip_str
