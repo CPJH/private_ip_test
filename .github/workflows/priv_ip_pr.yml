@@ -47,8 +47,8 @@ jobs:
         run: |
           echo "Files changed: $FILES_CHANGED"
           for file in $FILES_CHANGED; do
-            ./scan_for_priv_ip_master.py $file
+            ${GITHUB_WORKSPACE}/.github/scan_for_priv_ip_master.py $file
             echo -e "\n**********Checking for Private IP addresses in diff of this file in Pull Request. **********\n" 
-            ./detect_privateip_pr.py $file
+            ${GITHUB_WORKSPACE}/.github/detect_privateip_pr.py $file
           done
         shell: bash
