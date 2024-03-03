@@ -58,6 +58,6 @@ if count > 0:
     print(f"The following private IP addresses already exist in file \"{changed_file}\" in the master branch")
     for k, v in private_ips.items():
         print(f"{v} at the key path: {k}")
-    print(f"\nTotal number of Private IP addresses found: {count}")
+    print(f"\nTotal number of Private IP addresses found for this file in the master branch: {count}")
 else:
     print(f"No private IP addresses exist  on the {changed_file} in the master branch")
