@@ -1,4 +1,4 @@
-name: PrivateIPs Check
+name: PrivateIPs Check Test
 
 on:
   pull_request:
