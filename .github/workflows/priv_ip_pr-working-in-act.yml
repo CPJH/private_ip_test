@@ -1,4 +1,4 @@
-name: PrivateIPs Check
+name: PrivateIPs Check Working in act local testing tool
 
 on:
   pull_request:
