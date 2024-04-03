@@ -1,0 +1,44 @@
+name: PrivateIPs Check
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - "net/*.sls"
+  workflow_dispatch:
+
+env:
+  GH_PR_BASE_REF: ${{ github.event.pull_request.base.sha }}
+  GH_PR_HEAD_REF: ${{ github.sha }}
+
+jobs:
+  check-for-privateIPs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Install needed packages
+        run: |
+          sudo apt update && sudo apt install python3 && sudo apt -y install python3-yaml
+      - name: set files changed env variable
+        if: env.GH_PR_BASE_REF
+        run: echo "FILES_CHANGED=$(git diff --name-only ${GH_PR_BASE_REF} ${GH_PR_HEAD_REF} | grep -w net | xargs)" >> $GITHUB_ENV
+        shell: bash
+
+      - name:  checkout master version of files and create diff containing ip adds and deletions for each changed file
+        if: env.GH_PR_BASE_REF
+        run: |
+          for file in $FILES_CHANGED; do
+            git show ${GH_PR_BASE_REF}:$file > $file.master || touch $file.master #### Will create an empty file for any new files in pr
+            git show ${GH_PR_HEAD_REF}:$file > $file.pr
+            git diff ${GH_PR_BASE_REF} ${GH_PR_HEAD_REF} --unified=0 -- $file > $file.gitdiff
+          done
+      - name: Run check script
+        run: |
+          ${GITHUB_WORKSPACE}/.github/1.py $FILES_CHANGED
+        shell: bash
