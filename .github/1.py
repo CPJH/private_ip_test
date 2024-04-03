@@ -168,6 +168,7 @@ def check_allipsprivate_pr(ip, filepath):
     with open(updated_file, 'r') as f:
         yaml_data = yaml.safe_load(f)
     private_ips  = analyze_yaml(yaml_data)[0]
+    os.remove(updated_file)
     privip_paths = []
     for k, v in private_ips.items():
         if v == ip:
